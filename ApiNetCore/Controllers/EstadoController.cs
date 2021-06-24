@@ -7,7 +7,7 @@ using System.Linq;
 namespace ApiNetCore.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class EstadoController : ControllerBase
     {
         private static readonly string[] States = new[]
