@@ -20,6 +20,7 @@ namespace ApiNetCore
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors();
             services.AddResponseCompression(options =>
             {
                 options.EnableForHttps = true;
@@ -45,6 +46,12 @@ namespace ApiNetCore
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseCors(x => x
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .SetIsOriginAllowed(origin => true)
+                .AllowCredentials());
 
             app.UseAuthorization();
 
