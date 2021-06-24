@@ -1,9 +1,11 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using System.Linq;
 
 namespace ApiNetCore
 {
@@ -18,7 +20,12 @@ namespace ApiNetCore
 
         public void ConfigureServices(IServiceCollection services)
         {
-
+            services.AddResponseCompression(options =>
+            {
+                options.EnableForHttps = true;
+                options.Providers.Add<GzipCompressionProvider>();
+                options.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(new[] { "application/json" });
+            });
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
@@ -35,9 +42,13 @@ namespace ApiNetCore
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "ApiNetCore v1"));
             }
 
+            app.UseHttpsRedirection();
+
             app.UseRouting();
 
             app.UseAuthorization();
+
+            app.UseResponseCompression();
 
             app.UseEndpoints(endpoints =>
             {
